@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Job Portal - User & Admin System</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- ============================================================== -->
+  <!-- 1. LOGIN & SIGNUP SCREEN (Shown first if not logged in)       -->
+  <!-- ============================================================== -->
+  <div id="auth-screen" class="auth-screen">
+    <div class="auth-card">
+      <div class="auth-header">
+        <span class="auth-icon">💼</span>
+        <h2>Job Portal Login</h2>
+        <p>Please log in to continue</p>
+      </div>
+
+      <!-- Quick Demo Login Buttons -->
+      <div class="demo-box">
+        <p><strong>1-Click Quick Demo Login:</strong></p>
+        <div class="demo-btn-group">
+          <button type="button" class="btn btn-sm btn-secondary" id="demo-user-btn">👤 Login as User</button>
+          <button type="button" class="btn btn-sm btn-primary" id="demo-admin-btn">🛠️ Login as Admin</button>
+        </div>
+      </div>
+
+      <!-- Role Tabs -->
+      <div class="role-tabs">
+        <button class="role-tab active" id="tab-login-mode">Log In</button>
+        <button class="role-tab" id="tab-signup-mode">Create New Account</button>
+      </div>
+
+      <!-- Login Form -->
+      <form id="login-form">
+        <div class="form-group">
+          <label>Email Address</label>
+          <input type="email" id="login-email" placeholder="e.g. user@jobportal.com" required>
+        </div>
+
+        <div class="form-group">
+          <label>Password</label>
+          <input type="password" id="login-password" placeholder="Enter password" required>
+        </div>
+
+        <div class="form-group">
+          <label>Log In As</label>
+          <select id="login-role">
+            <option value="user">Job Seeker (User)</option>
+            <option value="admin">Recruiter (Admin)</option>
+          </select>
+        </div>
+
+        <div id="login-error" class="error-text hidden"></div>
+
+        <button type="submit" class="btn btn-primary btn-block">Log In to Portal</button>
+      </form>
+
+      <!-- Signup Form -->
+      <form id="signup-form" class="hidden">
+        <div class="form-group">
+          <label>Full Name</label>
+          <input type="text" id="signup-name" placeholder="John Doe" required>
+        </div>
+
+        <div class="form-group">
+          <label>Email Address</label>
+          <input type="email" id="signup-email" placeholder="john@example.com" required>
+        </div>
+
+        <div class="form-group">
+          <label>Account Role</label>
+          <select id="signup-role">
+            <option value="user">Job Seeker (User)</option>
+            <option value="admin">Recruiter (Admin)</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Password (Min 6 characters)</label>
+          <input type="password" id="signup-password" placeholder="At least 6 characters" required>
+        </div>
+
+        <div id="signup-error" class="error-text hidden"></div>
+
+        <button type="submit" class="btn btn-primary btn-block">Create Account</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ============================================================== -->
+  <!-- 2. MAIN APPLICATION (Shown after login)                       -->
+  <!-- ============================================================== -->
+  <div id="main-app" class="hidden">
+
+    <!-- Top Navigation Bar (CSS Flexbox) -->
+    <header class="navbar">
+      <div class="nav-container">
+        
+        <div class="brand">
+          <span class="logo-emoji">💼</span>
+          <span class="brand-text">JobPortal</span>
+        </div>
+
+        <!-- Navigation Links for User -->
+        <nav class="nav-links" id="user-nav-links">
+          <button class="nav-link-btn active" id="btn-nav-browse">Browse Jobs</button>
+          <button class="nav-link-btn" id="btn-nav-my-apps">My Applications (<span id="user-apps-badge">0</span>)</button>
+        </nav>
+
+        <!-- Navigation Links for Admin -->
+        <nav class="nav-links hidden" id="admin-nav-links">
+          <button class="nav-link-btn active" id="btn-nav-admin-apps">All Applications (<span id="admin-apps-badge">0</span>)</button>
+          <button class="nav-link-btn" id="btn-nav-admin-jobs">Manage Jobs</button>
+        </nav>
+
+        <!-- User Profile Pill & Logout -->
+        <div class="nav-user-info">
+          <span class="logged-user-name" id="display-user-name">Welcome!</span>
+          <button class="btn btn-sm btn-danger" id="btn-logout">Log Out</button>
+        </div>
+
+      </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="page-container">
+
+      <!-- ========================================== -->
+      <!-- USER MODULE: JOB SEEKER INTERFACE          -->
+      <!-- ========================================== -->
+      <section id="user-section">
+
+        <!-- User View 1: Browse Jobs -->
+        <div id="user-browse-view">
+          
+          <div class="hero">
+            <h1>Available Job Openings</h1>
+            <p>Search for roles and apply online directly.</p>
+          </div>
+
+          <!-- Search & Filter Bar (CSS Grid + Flexbox) -->
+          <div class="search-bar-card">
+            <input type="text" id="job-search-input" placeholder="🔍 Search job title, company, or keyword...">
+            
+            <div class="filter-controls">
+              <select id="filter-type">
+                <option value="all">All Job Types</option>
+                <option value="Full-Time">Full-Time</option>
+                <option value="Remote">Remote</option>
+                <option value="Part-Time">Part-Time</option>
+              </select>
+
+              <select id="filter-dept">
+                <option value="all">All Departments</option>
+                <option value="Engineering">Engineering</option>
+                <option value="Design">Design</option>
+                <option value="Product">Product</option>
+                <option value="Marketing">Marketing</option>
+              </select>
+
+              <button class="btn btn-secondary" id="btn-clear-filters">Reset</button>
+            </div>
+          </div>
+
+          <!-- Job Cards Grid (CSS Grid) -->
+          <div class="job-grid" id="jobs-container">
+            <!-- Job cards injected by JavaScript -->
+          </div>
+
+        </div>
+
+        <!-- User View 2: My Applications -->
+        <div id="user-applications-view" class="hidden">
+          <div class="view-header">
+            <div>
+              <h2>My Submitted Applications</h2>
+              <p>Check the status of jobs you applied for.</p>
+            </div>
+            <button class="btn btn-secondary" id="btn-back-to-browse">&larr; Back to Jobs</button>
+          </div>
+
+          <div class="applications-container" id="my-apps-list">
+            <!-- Applications injected by JavaScript -->
+          </div>
+
+          <div id="no-apps-msg" class="empty-box hidden">
+            <p>You have not applied for any jobs yet.</p>
+            <button class="btn btn-primary" id="btn-empty-browse">Browse Jobs</button>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- ========================================== -->
+      <!-- ADMIN MODULE: RECRUITER INTERFACE          -->
+      <!-- ========================================== -->
+      <section id="admin-section" class="hidden">
+        
+        <div class="admin-top-banner">
+          <div>
+            <span class="admin-tag">Admin Portal</span>
+            <h1>Recruiter Dashboard</h1>
+            <p>View all candidate applications and manage job posts.</p>
+          </div>
+          <button class="btn btn-primary" id="btn-admin-post-job">+ Post New Job</button>
+        </div>
+
+        <!-- KPI Metrics (CSS Grid) -->
+        <div class="admin-stats-grid">
+          <div class="stat-box">
+            <span class="stat-title">Total Job Openings</span>
+            <span class="stat-number" id="admin-total-jobs-count">0</span>
+          </div>
+          <div class="stat-box">
+            <span class="stat-title">Applications Received</span>
+            <span class="stat-number" id="admin-total-apps-count">0</span>
+          </div>
+          <div class="stat-box">
+            <span class="stat-title">Shortlisted Candidates</span>
+            <span class="stat-number" id="admin-shortlisted-count">0</span>
+          </div>
+        </div>
+
+        <!-- Admin View 1: All Candidate Applications Received -->
+        <div id="admin-applications-view">
+          <div class="view-header">
+            <h3>All Candidate Applications Received</h3>
+            <span class="note-text">When any user applies for a job, their submission shows up here!</span>
+          </div>
+
+          <div class="table-card">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Applicant Name</th>
+                  <th>Job Title</th>
+                  <th>Email & Phone</th>
+                  <th>Experience</th>
+                  <th>Resume</th>
+                  <th>Current Status</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="admin-applications-tbody">
+                <!-- Injected by JavaScript -->
+              </tbody>
+            </table>
+            <div id="no-admin-apps" class="empty-box hidden">
+              <p>No applications received yet. When users apply, they will appear here!</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Admin View 2: Manage Job Listings -->
+        <div id="admin-jobs-view" class="hidden">
+          <div class="view-header">
+            <h3>Active Job Listings</h3>
+          </div>
+
+          <div class="table-card">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Job Title</th>
+                  <th>Company</th>
+                  <th>Department</th>
+                  <th>Type</th>
+                  <th>Salary</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="admin-jobs-tbody">
+                <!-- Injected by JavaScript -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </section>
+
+    </main>
+
+  </div>
+
+  <!-- ============================================================== -->
+  <!-- MODALS                                                         -->
+  <!-- ============================================================== -->
+
+  <!-- Application Form Modal -->
+  <div class="modal-overlay hidden" id="apply-modal">
+    <div class="modal-card">
+      <div class="modal-top">
+        <div>
+          <h3>Apply for Job</h3>
+          <p id="apply-job-title-display" class="subtitle">Job Title</p>
+        </div>
+        <button class="close-x-btn" id="close-apply-modal">&times;</button>
+      </div>
+
+      <form id="apply-job-form">
+        <input type="hidden" id="apply-job-id">
+
+        <div class="form-group">
+          <label>Your Full Name *</label>
+          <input type="text" id="applicant-name" placeholder="John Doe" required>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Email Address *</label>
+            <input type="email" id="applicant-email" placeholder="john@example.com" required>
+          </div>
+          <div class="form-group">
+            <label>Phone Number *</label>
+            <input type="tel" id="applicant-phone" placeholder="+1 555-1234" required>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Experience Level *</label>
+          <select id="applicant-exp" required>
+            <option value="">Select Experience</option>
+            <option value="Fresher / Entry-Level">Fresher / Entry-Level</option>
+            <option value="1-3 Years">1-3 Years</option>
+            <option value="3-5 Years">3-5 Years</option>
+            <option value="5+ Years">5+ Years</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Resume File Name or Upload *</label>
+          <input type="text" id="applicant-resume" placeholder="e.g. Resume_JohnDoe.pdf" required>
+        </div>
+
+        <div class="form-group">
+          <label>Short Message / Cover Note</label>
+          <textarea id="applicant-note" rows="2" placeholder="Why are you a good fit?"></textarea>
+        </div>
+
+        <div class="modal-buttons">
+          <button type="button" class="btn btn-secondary" id="btn-cancel-apply">Cancel</button>
+          <button type="submit" class="btn btn-primary">Submit Application</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Post New Job Modal (Admin) -->
+  <div class="modal-overlay hidden" id="post-job-modal">
+    <div class="modal-card">
+      <div class="modal-top">
+        <h3>Post a New Job Opening</h3>
+        <button class="close-x-btn" id="close-post-job-modal">&times;</button>
+      </div>
+
+      <form id="new-job-form">
+        <div class="form-group">
+          <label>Job Title *</label>
+          <input type="text" id="new-job-title" placeholder="e.g. Frontend Developer" required>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Company Name *</label>
+            <input type="text" id="new-job-company" placeholder="e.g. Google / Microsoft" required>
+          </div>
+
+          <div class="form-group">
+            <label>Department *</label>
+            <select id="new-job-dept">
+              <option value="Engineering">Engineering</option>
+              <option value="Design">Design</option>
+              <option value="Product">Product</option>
+              <option value="Marketing">Marketing</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Job Type *</label>
+            <select id="new-job-type">
+              <option value="Full-Time">Full-Time</option>
+              <option value="Remote">Remote</option>
+              <option value="Part-Time">Part-Time</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Location *</label>
+            <input type="text" id="new-job-location" placeholder="e.g. New York, NY or Remote" required>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Salary *</label>
+          <input type="text" id="new-job-salary" placeholder="e.g. $80,000 - $110,000 / year" required>
+        </div>
+
+        <div class="form-group">
+          <label>Job Description *</label>
+          <textarea id="new-job-description" rows="3" placeholder="Describe the job duties..." required></textarea>
+        </div>
+
+        <div class="modal-buttons">
+          <button type="button" class="btn btn-secondary" id="btn-cancel-post-job">Cancel</button>
+          <button type="submit" class="btn btn-primary">Publish Job</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Notification Toast -->
+  <div id="toast-msg" class="toast-msg hidden"></div>
+
+  <!-- JavaScript File -->
+  <script src="script.js"></script>
+</body>
+</html>
